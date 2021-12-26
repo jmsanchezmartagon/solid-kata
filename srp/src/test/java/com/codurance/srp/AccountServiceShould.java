@@ -14,7 +14,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,14 +34,11 @@ public class AccountServiceShould {
     @Mock
     private TransactionRepository transactionRepository;
 
-    @Mock
-    private Console console;
-
     private AccountService accountService;
 
     @Before
     public void setUp() {
-        accountService = new AccountService(transactionRepository, clock, console);
+        accountService = new AccountService(transactionRepository, clock);
         given(clock.today()).willReturn(TODAY);
     }
 
@@ -64,18 +60,6 @@ public class AccountServiceShould {
         verify(transactionRepository).add(refEq(new Transaction(TODAY, NEGATIVE_AMOUNT)));
     }
 
-    @Test
-    public void print_statement() {
-        given(transactionRepository.all()).willReturn(TRANSACTIONS);
-
-        accountService.printStatement();
-
-        InOrder inOrder = inOrder(console);
-        inOrder.verify(console).printLine("DATE | AMOUNT | BALANCE");
-        inOrder.verify(console).printLine("10/04/2014 | 500.00 | 1400.00");
-        inOrder.verify(console).printLine("02/04/2014 | -100.00 | 900.00");
-        inOrder.verify(console).printLine("01/04/2014 | 1000.00 | 1000.00");
-    }
 }
 
 
